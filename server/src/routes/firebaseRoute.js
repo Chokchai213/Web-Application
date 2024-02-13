@@ -1,14 +1,15 @@
-
 const express = require('express');
 const router = express.Router();
-const firebaseauth = require('../controllers/firebaseAuth');
+const firebaseAuth = require('../controllers/firebaseAuth');
 
 router.get('/test', (req, res) => {
     res.json({ message: 'This is a sample JSON response' });
 });
 
-router.post('/signup', firebaseauth.signup);
+router.post('/signup', firebaseAuth.signup);
 
-router.post('/signin', firebaseauth.signin);
+router.post('/signin', firebaseAuth.signin);
+
+router.post('/signout', firebaseAuth.signout);
 
 module.exports = router;

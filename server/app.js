@@ -1,9 +1,11 @@
-// app.js
 const express = require("express");
-const authRoutes = require('./src/routes/firebaseRoute');
+const firebaseRoute = require('./src/routes/firebaseRoute');
+const bodyParser = require("body-parser");
 
 const app = express();
-app.use('/auth', authRoutes);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use('/auth', firebaseRoute);
 
 module.exports = app;
 const PORT = process.env.PORT;
