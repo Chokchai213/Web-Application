@@ -11,10 +11,18 @@ import Stack from '@mui/joy/Stack';
 import GoogleIcon from '@mui/icons-material/Google';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import { signInWithGooglePopup } from "../utils/firebase.utils"
 import axios from 'axios'
 const baseURL = "http://localhost:8000/auth";
 
-
+const SignInWithGoogle = async () => {
+    console.log('clicked')
+    await signInWithGooglePopup().then(response => {
+        console.log(response)
+    }).catch(error => {
+        console.log(error)
+    });
+}
 function OverlayLoading({ isLoading }) {
     const [open, setOpen] = React.useState(false);
 
@@ -105,11 +113,11 @@ export default function SignUpSignInModal({ mode }) {
                             </FormControl>
                             <FormControl>
                                 <FormLabel>Password</FormLabel>
-                                <Input required onChange={(e) => setPassword(e.target.value)} />
+                                <Input required onChange={(e) => setPassword(e.target.value)} type="password" />
                             </FormControl>
                             <Button type="submit">{mode}</Button>
                             <DialogContent>{`${mode} with other provider`}</DialogContent>
-                            <Button variant="outlined" startIcon={<GoogleIcon />}>
+                            <Button variant="outlined" startIcon={<GoogleIcon />} onClick={SignInWithGoogle}>
                                 {mode} with Google
                             </Button>
                         </Stack>
