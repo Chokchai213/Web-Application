@@ -1,9 +1,10 @@
+require('dotenv').config({ path: '../.env' });
 const firebaseAdmin = require('../configs/firebaseConfig');
 
 exports.signup = async (req, res) => {
-    console.log(req.body)
-    const { email, password } = req.body;
-    firebaseAdmin.auth()
+  console.log(req.body)
+  const { email, password } = req.body;
+  firebaseAdmin.auth()
     .createUser({
       email: email,
       password: password,
@@ -20,30 +21,30 @@ exports.signup = async (req, res) => {
 };
 
 exports.signin = async (req, res) => {
-    const { email, password } = req.body;
-    firebaseAdmin.auth().signInWithEmailAndPassword(email, password)
-        .then((userCredential) => {
-            // Signed in
-            var user = userCredential.user;
-            // Respond with success message or user data
-            res.status(200).send(user);
-        })
-        .catch((error) => {
-            var errorCode = error.code;
-            var errorMessage = error.message;
-            // Respond with error message
-            res.status(401).send(errorCode, errorMessage);
-        });
+  const { email, password } = req.body;
+  try {
+    const signInResponse = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${process.env.FIREBASE_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password,
+        returnSecureToken: true,
+      }),
+    });
+    if (!signInResponse.ok) {
+      const errorData = await signInResponse.json();
+      throw new Error(errorData.error.message);
+    }
+    const signInData = await signInResponse.json();
+    console.log(signInData)
+    res.status(200).json({ signInData });
+  } catch (error) {
+    console.error('Error signing in user:', error.message);
+    res.status(401).json({ message: 'Authentication failed' });
+  }
 };
-
 exports.signout = async (req, res) => {
-    firebaseAdmin.auth().signOut().then(() => {
-        // Sign-out successful.
-        // Respond with success message
-        res.status(200).json({ message: 'User signed out successfully' });
-      }).catch((error) => {
-        // An error happened.
-        // Respond with error message
-        res.status(500).json({ message: 'Error signing out user' });
-      });
 };
