@@ -1,42 +1,68 @@
-import React from 'react';
-import Box from '@mui/material/Box';
+import * as React from 'react';
 import Button from '@mui/material/Button';
-import Modal from '@mui/material/Modal';
-import axios from 'axios';
-const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 400,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
+import FormControl from '@mui/joy/FormControl';
+import FormLabel from '@mui/joy/FormLabel';
+import Input from '@mui/joy/Input';
+import Modal from '@mui/joy/Modal';
+import ModalDialog from '@mui/joy/ModalDialog';
+import DialogTitle from '@mui/joy/DialogTitle';
+import DialogContent from '@mui/joy/DialogContent';
+import Stack from '@mui/joy/Stack';
+import GoogleIcon from '@mui/icons-material/Google';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import axios from 'axios'
 const baseURL = "http://localhost:8000/auth";
-export default function SignUpSignInModal() {
+
+
+function OverlayLoading({ isLoading }) {
     const [open, setOpen] = React.useState(false);
-    const handleOpen = () => setOpen(true);
-    const handleClose = () => setOpen(false);
+
+    React.useEffect(() => {
+        setOpen(isLoading);
+    }, [isLoading]);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    return (
+        <div>
+            <Backdrop
+                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                open={open}
+                onClick={handleClose}
+            >
+                <CircularProgress color="inherit" />
+            </Backdrop>
+        </div>
+    );
+}
+
+export default function SignUpSignInModal({ mode }) {
+    const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
     const [user, setUser] = React.useState(null);
+    const [isLoading, setisLoading] = React.useState(false);
 
     function register() {
+        setisLoading(true)
         axios.post(`${baseURL}/signup`, {
             email: email,
             password: password
         })
             .then((response) => {
+                console.log(response)
                 setUser(response.data)
+                setisLoading(false)
             })
             .catch(error => {
-                console.log(error);
+                console.log('An Error Occured', error);
             });
     }
-
     function signin() {
+        setisLoading(true)
         axios.post(`${baseURL}/signin`, {
             email: email,
             password: password
@@ -44,66 +70,52 @@ export default function SignUpSignInModal() {
             .then((response) => {
                 console.log(response)
                 setUser(response.data)
+                setisLoading(false)
             })
             .catch(error => {
-                console.log(error);
+                console.log('An Error Occured', error);
             });
-    }
-    function logout() {
-        setUser(null)
     }
 
     return (
-        <div>
-
-            <Button onClick={handleOpen}>Open modal</Button>
-            <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
+        <React.Fragment>
+            <OverlayLoading isLoading={isLoading} />
+            <Button
+                variant="primary"
+                color="neutral"
+                onClick={() => setOpen(true)}
             >
-                <Box sx={style}>
-                    <body>
-                        <h1>Sign-Up</h1>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
-                        />
-                        <button onClick={register}>Register</button>
-                        <h1>Sign-In</h1>
-                        <input
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Email"
-                        />
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Password"
-                        />
-                        <button onClick={signin}>Sign-In</button>
-                        <h1>Logout</h1>
-                        <button onClick={logout}>logout</button>
-                        {user && (
-                            <div>
-                                <h2>Current User:</h2>
-                                <p>{JSON.stringify(user)}</p>
-                            </div>
-                        )}
-                    </body>
-                </Box>
+                {mode}
+            </Button>
+            <Modal open={open} onClose={() => setOpen(false)}>
+                <ModalDialog>
+                    <DialogTitle>{mode}</DialogTitle>
+                    <DialogContent>{`${mode} using Email and Password`}</DialogContent>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            mode === 'Register' ? register(email, password) : signin(email, password)
+                            setOpen(false);
+                        }}
+                    >
+                        <Stack spacing={2}>
+                            <FormControl>
+                                <FormLabel>Email</FormLabel>
+                                <Input autoFocus required onChange={(e) => setEmail(e.target.value)} />
+                            </FormControl>
+                            <FormControl>
+                                <FormLabel>Password</FormLabel>
+                                <Input required onChange={(e) => setPassword(e.target.value)} />
+                            </FormControl>
+                            <Button type="submit">{mode}</Button>
+                            <DialogContent>{`${mode} with other provider`}</DialogContent>
+                            <Button variant="outlined" startIcon={<GoogleIcon />}>
+                                {mode} with Google
+                            </Button>
+                        </Stack>
+                    </form>
+                </ModalDialog>
             </Modal>
-        </div>
+        </React.Fragment>
     );
 }
