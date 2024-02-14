@@ -5,8 +5,6 @@ import Container from '@mui/material/Container';
 import SignUpSignInModal from './SignUpSignInModal';
 
 function ResponsiveAppBar() {
-
-
   return (
     <AppBar position="static">
       <Container maxWidth="xl">

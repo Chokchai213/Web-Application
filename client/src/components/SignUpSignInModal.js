@@ -15,14 +15,6 @@ import { signInWithGooglePopup } from "../utils/firebase.utils"
 import axios from 'axios'
 const baseURL = "http://localhost:8000/auth";
 
-const SignInWithGoogle = async () => {
-    console.log('clicked')
-    await signInWithGooglePopup().then(response => {
-        console.log(response)
-    }).catch(error => {
-        console.log(error)
-    });
-}
 function OverlayLoading({ isLoading }) {
     const [open, setOpen] = React.useState(false);
 
@@ -53,7 +45,15 @@ export default function SignUpSignInModal({ mode }) {
     const [password, setPassword] = React.useState('');
     const [user, setUser] = React.useState(null);
     const [isLoading, setisLoading] = React.useState(false);
-
+    
+    const SignInWithGoogle = async () => {
+        await signInWithGooglePopup().then(response => {
+            console.log('success')
+            setUser(response.user)
+        }).catch(error => {
+            console.log(error)
+        });
+    }
     function register() {
         setisLoading(true)
         axios.post(`${baseURL}/signup`, {
@@ -61,8 +61,9 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
+                console.log('success')
                 console.log(response)
-                setUser(response.data)
+                setUser(response.user)
                 setisLoading(false)
             })
             .catch(error => {
@@ -76,15 +77,15 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
+                console.log('success')
                 console.log(response)
-                setUser(response.data)
+                setUser(response.user)
                 setisLoading(false)
             })
             .catch(error => {
                 console.log('An Error Occured', error);
             });
     }
-
     return (
         <React.Fragment>
             <OverlayLoading isLoading={isLoading} />
