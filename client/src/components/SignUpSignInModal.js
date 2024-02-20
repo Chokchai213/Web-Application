@@ -11,8 +11,8 @@ import Stack from '@mui/joy/Stack';
 import GoogleIcon from '@mui/icons-material/Google';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
-import { signInWithGooglePopup } from "../utils/firebase.utils"
-import axios from 'axios'
+import { signInWithGooglePopup } from "../utils/firebase.utils";
+import axios from 'axios';
 const baseURL = "http://localhost:8000/auth";
 
 function OverlayLoading({ isLoading }) {
@@ -25,7 +25,6 @@ function OverlayLoading({ isLoading }) {
     const handleClose = () => {
         setOpen(false);
     };
-
     return (
         <div>
             <Backdrop
@@ -43,13 +42,13 @@ export default function SignUpSignInModal({ mode }) {
     const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
-    const [user, setUser] = React.useState(null);
     const [isLoading, setisLoading] = React.useState(false);
-    
     const SignInWithGoogle = async () => {
+        setisLoading(true)
         await signInWithGooglePopup().then(response => {
-            console.log('success')
-            setUser(response.user)
+            // dispatch(setUser(response.user))
+            setisLoading(false)
+            setOpen(false)
         }).catch(error => {
             console.log(error)
         });
@@ -61,10 +60,9 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
-                console.log('success')
-                console.log(response)
-                setUser(response.user)
+                // dispatch(setUser(response.user))
                 setisLoading(false)
+                setOpen(false)
             })
             .catch(error => {
                 console.log('An Error Occured', error);
@@ -77,10 +75,9 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
-                console.log('success')
-                console.log(response)
-                setUser(response.user)
+                // dispatch(setUser(response.data.signInData))
                 setisLoading(false)
+                setOpen(false)
             })
             .catch(error => {
                 console.log('An Error Occured', error);
