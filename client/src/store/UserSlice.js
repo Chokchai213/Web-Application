@@ -11,9 +11,15 @@ export const userSlice = createSlice({
     initialState: initialState,
     reducers: {
         Login: (state, action) => {
-            const {userId, userName} =  action.payload;
-            state.userId = userId;
-            state.usrName = userName;
+            let user_id
+            if('uid' in action.payload){
+                user_id = action.payload.uid
+            }else{
+                user_id = action.payload.localId
+            }
+            const { email} =  action.payload;
+            state.userId = user_id;
+            state.userName = email;
             state.isLogIn = true;
         },
         Logout : (state) => {

@@ -12,7 +12,9 @@ import GoogleIcon from '@mui/icons-material/Google';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { signInWithGooglePopup } from "../utils/firebase.utils";
+import {useDispatch, useSelector} from "react-redux";
 import axios from 'axios';
+import { Login } from '../store/UserSlice';
 const baseURL = "http://localhost:8000/auth";
 
 function OverlayLoading({ isLoading }) {
@@ -39,6 +41,8 @@ function OverlayLoading({ isLoading }) {
 }
 
 export default function SignUpSignInModal({ mode }) {
+    const userStore = useSelector(state => state.userStore)
+    const dispatch = useDispatch()
     const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState('');
     const [password, setPassword] = React.useState('');
@@ -46,7 +50,7 @@ export default function SignUpSignInModal({ mode }) {
     const SignInWithGoogle = async () => {
         setisLoading(true)
         await signInWithGooglePopup().then(response => {
-            // dispatch(setUser(response.user))
+            dispatch(Login(response.user))
             setisLoading(false)
             setOpen(false)
         }).catch(error => {
@@ -60,7 +64,7 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
-                // dispatch(setUser(response.user))
+                dispatch(Login(response.user))
                 setisLoading(false)
                 setOpen(false)
             })
@@ -75,7 +79,7 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
-                // dispatch(setUser(response.data.signInData))
+                dispatch(Login(response.data.signInData))
                 setisLoading(false)
                 setOpen(false)
             })
