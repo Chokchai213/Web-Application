@@ -51,6 +51,7 @@ export default function SignUpSignInModal({ mode }) {
         setisLoading(true)
         await signInWithGooglePopup().then(response => {
             dispatch(Login(response.user))
+            localStorage.setItem('userData', JSON.stringify(response.user))
             setisLoading(false)
             setOpen(false)
         }).catch(error => {
@@ -65,6 +66,7 @@ export default function SignUpSignInModal({ mode }) {
         })
             .then((response) => {
                 dispatch(Login(response.user))
+                localStorage.setItem('userData', JSON.stringify(response.user))
                 setisLoading(false)
                 setOpen(false)
             })
@@ -80,6 +82,7 @@ export default function SignUpSignInModal({ mode }) {
         })
             .then((response) => {
                 dispatch(Login(response.data.signInData))
+                localStorage.setItem('userData', JSON.stringify(response.data.signInData))
                 setisLoading(false)
                 setOpen(false)
             })
