@@ -13,6 +13,7 @@ function Home() {
       <ResponsiveAppBar></ResponsiveAppBar>
       <Button onClick={e => {
         dispatch(Logout())
+        
       }}>Log Out</Button>
       <Button onClick={e => {
         navigate('/test')

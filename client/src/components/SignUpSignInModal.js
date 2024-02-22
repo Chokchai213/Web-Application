@@ -12,7 +12,7 @@ import GoogleIcon from '@mui/icons-material/Google';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import { signInWithGooglePopup } from "../utils/firebase.utils";
-import {useDispatch, useSelector} from "react-redux";
+import { useDispatch } from "react-redux";
 import axios from 'axios';
 import { Login } from '../store/UserSlice';
 const baseURL = "http://localhost:8000/auth";
@@ -41,7 +41,6 @@ function OverlayLoading({ isLoading }) {
 }
 
 export default function SignUpSignInModal({ mode }) {
-    const userStore = useSelector(state => state.userStore)
     const dispatch = useDispatch()
     const [open, setOpen] = React.useState(false);
     const [email, setEmail] = React.useState('');
@@ -55,6 +54,7 @@ export default function SignUpSignInModal({ mode }) {
             setisLoading(false)
             setOpen(false)
         }).catch(error => {
+            setisLoading(false)
             console.log(error)
         });
     }
@@ -65,12 +65,13 @@ export default function SignUpSignInModal({ mode }) {
             password: password
         })
             .then((response) => {
-                dispatch(Login(response.user))
-                localStorage.setItem('userData', JSON.stringify(response.user))
+                dispatch(Login(response.data.userRecord))
+                localStorage.setItem('userData', JSON.stringify(response.data.userRecord))
                 setisLoading(false)
                 setOpen(false)
             })
             .catch(error => {
+                setisLoading(false)
                 console.log('An Error Occured', error);
             });
     }
@@ -87,6 +88,7 @@ export default function SignUpSignInModal({ mode }) {
                 setOpen(false)
             })
             .catch(error => {
+                setisLoading(false)
                 console.log('An Error Occured', error);
             });
     }
