@@ -3,21 +3,26 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Test from './pages/Test';
-import {useDispatch} from "react-redux";
+import { useDispatch } from "react-redux";
 import { Login } from './store/UserSlice';
 function App() {
   const dispatch = useDispatch()
-  const localUser = localStorage.getItem('userData')
-  if(localUser){
-    dispatch(Login(JSON.parse(localUser)))
+  try {
+    const localUser = localStorage.getItem('userData')
+    if (localUser) {
+      dispatch(Login(JSON.parse(localUser)))
+    }
+  } catch (e) {
+    console.log(e)
   }
+
   return (
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/Test" element={<Test />} />
-        </Routes>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/Test" element={<Test />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -13,7 +13,7 @@ function Home() {
       <ResponsiveAppBar></ResponsiveAppBar>
       <Button onClick={e => {
         dispatch(Logout())
-        
+        localStorage.removeItem("userData");
       }}>Log Out</Button>
       <Button onClick={e => {
         navigate('/test')
